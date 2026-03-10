@@ -12,22 +12,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("signup")
-    public ResponseEntity<Void> localSignUp(@Valid @RequestBody SignUpRequest dto){
+    @PostMapping("/signup")
+    public ResponseEntity<Void> localSignUp(@Valid @RequestBody SignUpRequest dto) {
         authService.localSignUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 
-    @PostMapping("login")
-    public ResponseEntity<Void> localLogin(@Valid @RequestBody LoginRequest dto){
+    @PostMapping("/login")
+    public ResponseEntity<Void> localLogin(@Valid @RequestBody LoginRequest dto) {
         authService.localLogin(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok()
+                .build();
     }
 
 

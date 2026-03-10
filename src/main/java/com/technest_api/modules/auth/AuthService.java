@@ -26,7 +26,12 @@ public class AuthService {
         if (existByEmail) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-        User newUser = User.builder().userName(dto.getUserName()).email(dto.getEmail()).passwordHash(passwordEncoder.encode(dto.getPassword())).build();
+
+        User newUser = User.builder()
+                .userName(dto.getUserName())
+                .email(dto.getEmail())
+                .passwordHash(passwordEncoder.encode(dto.getPassword()))
+                .build();
         userRepo.save(newUser);
     }
 
