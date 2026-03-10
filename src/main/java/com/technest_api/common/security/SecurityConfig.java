@@ -1,5 +1,6 @@
 package com.technest_api.common.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,9 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    private final String[] publicRoutes = {"/auth/signup", "/auth/login", "/auth/refresh"};
     @Value("${app.cors.origin}")
     private String origin;
-
-    private final String[] publicRoutes = {"/auth/signup", "/auth/login", "/auth/refresh"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,15 +32,31 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(publicRoutes)
                         .permitAll()
                         .anyRequest()
-                        .authenticated());
-
+                        .authenticated())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(
+                                (request, response, authException) -> {
+                                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    response.setContentType("application/json");
+                                    response.getWriter()
+                                            .write("""
+                                                    {"status": 401, "message": "Unauthorized", "path": "%s"}
+                                                    """.formatted(request.getRequestURI()));
+                                })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter()
+                                    .write("""
+                                            {"status": 403, "message": "Access Denied", "path": "%s"}
+                                            """.formatted(request.getRequestURI()));
+                        }));
         return httpSecurity.build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

@@ -1,6 +1,6 @@
-package com.technest_api.modules.user.model;
+package com.technest_api.module.user.model;
 
-import com.technest_api.common.enums.Role;
+import com.technest_api.common.constant.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

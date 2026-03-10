@@ -1,7 +1,7 @@
-package com.technest_api.modules.auth;
+package com.technest_api.module.auth;
 
-import com.technest_api.modules.auth.dto.LoginRequest;
-import com.technest_api.modules.auth.dto.SignUpRequest;
+import com.technest_api.module.auth.dto.LoginRequest;
+import com.technest_api.module.auth.dto.SignUpRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.technest_api.modules.auth.dto;
+package com.technest_api.module.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import lombok.Setter;
 public class SignUpRequest {
 
     @NotBlank()
-    @Size(min = 3,max = 50)
+    @Size(min = 3, max = 50)
     private String userName;
 
     @NotBlank()

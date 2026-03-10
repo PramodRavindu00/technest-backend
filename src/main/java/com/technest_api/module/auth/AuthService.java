@@ -1,10 +1,10 @@
-package com.technest_api.modules.auth;
+package com.technest_api.module.auth;
 
-import com.technest_api.modules.auth.dto.AuthResponse;
-import com.technest_api.modules.auth.dto.LoginRequest;
-import com.technest_api.modules.auth.dto.SignUpRequest;
-import com.technest_api.modules.user.UserRepository;
-import com.technest_api.modules.user.model.User;
+import com.technest_api.module.auth.dto.AuthResponse;
+import com.technest_api.module.auth.dto.LoginRequest;
+import com.technest_api.module.auth.dto.SignUpRequest;
+import com.technest_api.module.user.UserRepository;
+import com.technest_api.module.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

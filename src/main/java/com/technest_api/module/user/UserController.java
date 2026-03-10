@@ -1,4 +1,4 @@
-package com.technest_api.modules.user;
+package com.technest_api.module.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
