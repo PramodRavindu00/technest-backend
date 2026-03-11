@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -18,12 +20,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public void localSignUp(SignUpRequest dto) {
-        Boolean existByUserName = userRepo.existsByUserName(dto.getUserName());
-        if (existByUserName) {
+        Optional<User> existByUserName = userRepo.findByUserName(dto.getUserName());
+        if (existByUserName.isPresent()) {
+            User userByUserName = existByUserName.get();
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User name already exists");
         }
-        Boolean existByEmail = userRepo.existsByEmail(dto.getEmail());
-        if (existByEmail) {
+        Optional<User> existByEmail = userRepo.findByEmail(dto.getEmail());
+        if (existByEmail.isPresent()) {
+            User userByEmail = existByEmail.get();
+            
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
 
