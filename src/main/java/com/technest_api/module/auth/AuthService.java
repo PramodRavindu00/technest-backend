@@ -20,20 +20,21 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public void localSignUp(SignUpRequest dto) {
-        Optional<User> existByUserName = userRepo.findByUserName(dto.getUserName());
-        if (existByUserName.isPresent()) {
-            User userByUserName = existByUserName.get();
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User name already exists");
-        }
         Optional<User> existByEmail = userRepo.findByEmail(dto.getEmail());
         if (existByEmail.isPresent()) {
             User userByEmail = existByEmail.get();
-            
+            if (userByEmail.getGoogleId() != null && userByEmail.getPasswordHash() == null) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Email already exists with" + " a google login");
+            }
+            if (userByEmail.getLinkedInId() != null && userByEmail.getPasswordHash() == null) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Email already exists with" + " a linkedin login");
+            }
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
 
         User newUser = User.builder()
-                .userName(dto.getUserName())
                 .email(dto.getEmail())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
                 .build();
@@ -42,7 +43,10 @@ public class AuthService {
 
 
     public AuthResponse localLogin(LoginRequest dto) {
-//        return {accessToken:""}
+        return null;
+    }
+
+    public AuthResponse handleOAuthLogin() {
         return null;
     }
 }
