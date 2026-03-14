@@ -20,6 +20,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final String[] publicRoutes = {"/auth/signup", "/auth/login", "/auth/refresh"};
+    
     @Value("${app.cors.origin}")
     private String origin;
 

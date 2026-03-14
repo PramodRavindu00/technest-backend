@@ -1,6 +1,5 @@
 package com.technest_api.module.auth;
 
-import com.technest_api.module.auth.dto.AuthResponse;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
 import com.technest_api.module.user.UserRepository;
@@ -11,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,13 +24,10 @@ public class AuthService {
         Optional<User> existByEmail = userRepo.findByEmail(dto.getEmail());
         if (existByEmail.isPresent()) {
             User userByEmail = existByEmail.get();
-            if (userByEmail.getGoogleId() != null && userByEmail.getPasswordHash() == null) {
+            if (userByEmail.getPasswordHash() == null) {
+                String connectedOauthProviders = getConnectedOauthProviders(userByEmail);
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Email already exists with" + " a google login");
-            }
-            if (userByEmail.getLinkedInId() != null && userByEmail.getPasswordHash() == null) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Email already exists with" + " a linkedin login");
+                        "Email already exists with" + connectedOauthProviders + " login");
             }
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
@@ -42,11 +40,35 @@ public class AuthService {
     }
 
 
-    public AuthResponse localLogin(LoginRequest dto) {
-        return null;
+    public void localLogin(LoginRequest dto) {
+        Optional<User> existingUserByEmail = userRepo.findByEmail(dto.getEmail());
+        if (existingUserByEmail.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
+        User exisitngUser = existingUserByEmail.get();
+        String currentPasswordHash = exisitngUser.getPasswordHash();
+        if (currentPasswordHash == null) {
+            String connectedOauthProviders = getConnectedOauthProviders(exisitngUser);
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "No password set for this account. You previously signed in with " +
+                            connectedOauthProviders + ". Please use that or reset your password.");
+        }
+        boolean isPasswordMatching =
+                passwordEncoder.matches(dto.getPassword(), currentPasswordHash);
+        if (!isPasswordMatching) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        }
     }
 
-    public AuthResponse handleOAuthLogin() {
-        return null;
+    public void oAuthLogin() {
+
+    }
+
+    private String getConnectedOauthProviders(User user) {
+        List<String> oauthProviders = new ArrayList<>();
+        if (user.getGoogleId() != null) oauthProviders.add("Google");
+        if (user.getLinkedInId() != null) oauthProviders.add("LinkedIn");
+        return oauthProviders.isEmpty() ? "an external provider" :
+                String.join(" and ", oauthProviders);
     }
 }

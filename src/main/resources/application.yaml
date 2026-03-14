@@ -28,11 +28,15 @@ spring:
 #            client-id: ${OAUTH_LINKEDIN_CLIENT_ID}
 #            client-secret: ${OAUTH_LINKEDIN_CLIENT_SECRET}
 
-jwt:
-  secret: ${JWT_SECRET}
 
 app:
   cors:
     origin: ${CLIENT_APP_DOMAIN}
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-expiration-ms: 90000
+    refresh-token-expiration-ms: 604800000
+  cookie:
+    refresh-token-expiration-sec: 6048
 
 
