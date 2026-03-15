@@ -1,15 +1,13 @@
 package com.technest_api.module.auth;
 
+import com.technest_api.module.auth.dto.AuthTokens;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,18 +17,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> localSignUp(@Valid @RequestBody SignUpRequest dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void localSignUp(@Valid @RequestBody SignUpRequest dto) {
         authService.localSignUp(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> localLogin(@Valid @RequestBody LoginRequest dto) {
-        authService.localLogin(dto);
-        return ResponseEntity.ok()
-                .build();
+    public ResponseEntity<AuthTokens> localLogin(@Valid @RequestBody LoginRequest dto) {
+        return ResponseEntity.ok(authService.localLogin(dto));
     }
-
 
 }

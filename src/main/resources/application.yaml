@@ -34,9 +34,10 @@ app:
     origin: ${CLIENT_APP_DOMAIN}
   jwt:
     secret: ${JWT_SECRET}
-    access-token-expiration-ms: 90000
+    access-token-expiration-ms: 900000
     refresh-token-expiration-ms: 604800000
   cookie:
-    refresh-token-expiration-sec: 6048
+    http-secure: ${COOKIE_HTTP_SECURE}
+    refresh-token-expiration-sec: 604800
 
 

@@ -1,5 +1,8 @@
 package com.technest_api.module.auth;
 
+import com.technest_api.common.constant.Role;
+import com.technest_api.common.security.JwtService;
+import com.technest_api.module.auth.dto.AuthTokens;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
 import com.technest_api.module.user.UserRepository;
@@ -19,6 +22,7 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public void localSignUp(SignUpRequest dto) {
         Optional<User> existByEmail = userRepo.findByEmail(dto.getEmail());
@@ -40,7 +44,7 @@ public class AuthService {
     }
 
 
-    public void localLogin(LoginRequest dto) {
+    public AuthTokens localLogin(LoginRequest dto) {
         Optional<User> existingUserByEmail = userRepo.findByEmail(dto.getEmail());
         if (existingUserByEmail.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -58,6 +62,18 @@ public class AuthService {
         if (!isPasswordMatching) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
+
+        // get values needed for token creation from the verified user
+        String userId = exisitngUser.getId()
+                .toString();
+        String email = exisitngUser.getEmail();
+        Role role = exisitngUser.getRole();
+
+        // generate tokens
+        String accessToken = jwtService.generateAccessToken(userId, email, role.name());
+        String refreshToken = jwtService.generateRefreshToken(userId, email, role.name());
+
+        return new AuthTokens(accessToken, refreshToken);
     }
 
     public void oAuthLogin() {
@@ -71,4 +87,6 @@ public class AuthService {
         return oauthProviders.isEmpty() ? "an external provider" :
                 String.join(" and ", oauthProviders);
     }
+
+
 }
