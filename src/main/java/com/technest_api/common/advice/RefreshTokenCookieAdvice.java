@@ -1,5 +1,7 @@
 package com.technest_api.common.advice;
 
+import com.technest_api.common.annotation.SetRefreshTokenCookie;
+import com.technest_api.module.auth.dto.AuthResponse;
 import com.technest_api.module.auth.dto.AuthTokens;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -16,7 +18,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
-public class RefreshTokenCookieAdvice implements ResponseBodyAdvice<AuthTokens> {
+
+public class RefreshTokenCookieAdvice implements ResponseBodyAdvice<Object> {
 
     @Value("${app.cookie.refresh-token-expiration-sec}")
     private long refreshTokenCookieExpiration;
@@ -27,21 +30,18 @@ public class RefreshTokenCookieAdvice implements ResponseBodyAdvice<AuthTokens> 
     @Override
     public boolean supports(MethodParameter returnType,
                             @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
-//        return AuthTokens.class.isAssignableFrom(Objects.requireNonNull(returnType.getMethod())
-//                .getReturnType());
-        return true;
+        return returnType.hasMethodAnnotation(SetRefreshTokenCookie.class);
     }
 
     @Override
-    public AuthTokens beforeBodyWrite(@Nullable AuthTokens body,
-                                      @NonNull MethodParameter returnType,
-                                      @NonNull MediaType selectedContentType,
-                                      @NonNull Class<? extends HttpMessageConverter<?>> converterType,
-                                      @NonNull ServerHttpRequest request,
-                                      @NonNull ServerHttpResponse response) {
-        if (body != null) {
-            if (body.getRefreshToken() != null) {
-                HttpCookie cookie = ResponseCookie.from("refreshToken", body.getRefreshToken())
+    public AuthResponse beforeBodyWrite(@Nullable Object body, @NonNull MethodParameter returnType,
+                                        @NonNull MediaType selectedContentType,
+                                        @NonNull Class<? extends HttpMessageConverter<?>> converterType,
+                                        @NonNull ServerHttpRequest request,
+                                        @NonNull ServerHttpResponse response) {
+        if (body instanceof AuthTokens tokens) {
+            if (tokens.getRefreshToken() != null) {
+                HttpCookie cookie = ResponseCookie.from("refreshToken", tokens.getRefreshToken())
                         .httpOnly(true)
                         .secure(isCookieHttpSecure)
                         .sameSite("Strict")
@@ -51,12 +51,10 @@ public class RefreshTokenCookieAdvice implements ResponseBodyAdvice<AuthTokens> 
                 response.getHeaders()
                         .add(HttpHeaders.SET_COOKIE, cookie.toString());
             }
-            if (body.getAccessToken() != null) {
-                return new AuthTokens(body.getAccessToken(), body.getRefreshToken());
+            if (tokens.getAccessToken() != null) {
+                return new AuthResponse(tokens.getAccessToken());
             }
         }
-
-
-        return body;
+        return null;
     }
 }
