@@ -49,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String userIdFromToken = "";
+        String userIdFromToken;
         try {
             // extract userId from the token claims
             userIdFromToken = jwtService.extractUserIdFromToken(token);

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
-
 public class RefreshTokenCookieAdvice implements ResponseBodyAdvice<Object> {
 
     @Value("${app.cookie.refresh-token-expiration-sec}")
