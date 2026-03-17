@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
                 .value());
         response.put("message", exception.getReason());
         response.put("path", request.getRequestURI());
+        response.put("method", request.getMethod());
         return ResponseEntity.status(exception.getStatusCode())
                 .body(response);
 
@@ -42,6 +43,7 @@ public class GlobalExceptionHandler {
         response.put("status", 400);
         response.put("errors", errors);
         response.put("path", request.getRequestURI());
+        response.put("method", request.getMethod());
         return ResponseEntity.badRequest()
                 .body(response);
 

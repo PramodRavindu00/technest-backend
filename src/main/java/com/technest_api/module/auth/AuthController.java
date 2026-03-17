@@ -4,6 +4,7 @@ import com.technest_api.common.annotation.SetRefreshTokenCookie;
 import com.technest_api.module.auth.dto.AuthTokens;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,12 @@ public class AuthController {
     @SetRefreshTokenCookie
     public ResponseEntity<AuthTokens> localLogin(@Valid @RequestBody LoginRequest dto) {
         return ResponseEntity.ok(authService.localLogin(dto));
+    }
+
+    @PostMapping("/refresh")
+    @SetRefreshTokenCookie
+    public ResponseEntity<AuthTokens> refresh(HttpServletRequest request) {
+        return ResponseEntity.ok(authService.refresh(request));
     }
 
 }

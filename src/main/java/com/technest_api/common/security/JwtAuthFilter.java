@@ -56,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         catch (Exception e) {
             SecurityErrorResponse.unauthorized(request, response, "Invalid Token");
+            return;
         }
 
         // get the user from the database using the userId from the token
