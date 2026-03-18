@@ -2,10 +2,12 @@ package com.technest_api.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,6 +49,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(response);
 
+    }
+
+    // Json syntax error or unknown properties failing handle
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleMalformedJson(
+            HttpMessageNotReadableException exception, HttpServletRequest request) {
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", 400);
+        response.put("path", request.getRequestURI());
+        response.put("method", request.getMethod());
+
+        // Unwrap the cause to give a specific message
+        Throwable cause = exception.getCause();
+        if (cause instanceof UnrecognizedPropertyException unrecognized) {
+            response.put("message", "Unknown field: '" + unrecognized.getPropertyName() + "'");
+        } else {
+            response.put("message", "Malformed or unreadable JSON request");
+        }
+
+        return ResponseEntity.badRequest()
+                .body(response);
     }
 
 }

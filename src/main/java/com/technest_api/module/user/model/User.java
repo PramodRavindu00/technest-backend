@@ -1,6 +1,7 @@
 package com.technest_api.module.user.model;
 
 import com.technest_api.common.constant.Role;
+import com.technest_api.common.constant.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -54,4 +55,12 @@ public class User {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column()
+    private LocalDateTime deactivatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 }

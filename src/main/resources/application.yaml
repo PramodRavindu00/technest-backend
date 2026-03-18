@@ -14,16 +14,22 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    #    show-sql: true
     properties:
       hibernate.format_sql: true
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
-#            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+  #    show-sql: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
 #          linkedin:
 #            client-id: ${OAUTH_LINKEDIN_CLIENT_ID}
 #            client-secret: ${OAUTH_LINKEDIN_CLIENT_SECRET}
