@@ -1,4 +1,4 @@
-package com.technest_api.common.security;
+package com.technest_api.common.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

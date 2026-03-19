@@ -1,7 +1,7 @@
 package com.technest_api.module.auth;
 
 import com.technest_api.common.constant.enums.Role;
-import com.technest_api.common.security.JwtService;
+import com.technest_api.common.service.JwtService;
 import com.technest_api.module.auth.dto.AuthTokens;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
