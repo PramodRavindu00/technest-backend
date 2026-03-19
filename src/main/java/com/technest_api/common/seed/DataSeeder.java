@@ -1,6 +1,6 @@
 package com.technest_api.common.seed;
 
-import com.technest_api.common.constant.Role;
+import com.technest_api.common.constant.enums.Role;
 import com.technest_api.module.user.UserRepository;
 import com.technest_api.module.user.model.User;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.technest_api.module.user.model;
 
-import com.technest_api.common.constant.Role;
-import com.technest_api.common.constant.UserStatus;
+import com.technest_api.common.constant.enums.Role;
+import com.technest_api.common.constant.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

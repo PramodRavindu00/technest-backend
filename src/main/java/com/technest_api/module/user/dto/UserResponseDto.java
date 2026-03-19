@@ -1,6 +1,6 @@
 package com.technest_api.module.user.dto;
 
-import com.technest_api.common.constant.Role;
+import com.technest_api.common.constant.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
