@@ -92,10 +92,6 @@ public class AuthService {
         return generateTokensFromVerifiedUser(user);
     }
 
-    public void oAuthLogin() {
-
-    }
-
     private String getConnectedOauthProviders(User user) {
         List<String> oauthProviders = new ArrayList<>();
         if (user.getGoogleId() != null) oauthProviders.add("Google");
