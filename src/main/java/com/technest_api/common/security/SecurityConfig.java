@@ -1,5 +1,8 @@
 package com.technest_api.common.security;
 
+import com.technest_api.common.filter.JwtAuthFilter;
+import com.technest_api.module.auth.oAuth.OAuth2LoginFailureHandler;
+import com.technest_api.module.auth.oAuth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +30,8 @@ public class SecurityConfig {
     private final String[] publicRoutes = {"/auth/signup", "/auth/login", "/auth/refresh"};
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
     @Value("${app.cors.origin}")
     private String origin;
@@ -58,8 +63,12 @@ public class SecurityConfig {
                                         response, "Unauthorized"))
                         .accessDeniedHandler(
                                 (request, response, ignored) -> SecurityErrorResponse.accessDenied(
-                                        request, response)));
+                                        request, response)))
+                .oauth2Login(oauth2 -> oauth2.successHandler());
+
         httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+
         return httpSecurity.build();
     }
 

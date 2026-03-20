@@ -30,11 +30,7 @@ spring:
             scope:
               - email
               - profile
-#          linkedin:
-#            client-id: ${OAUTH_LINKEDIN_CLIENT_ID}
-#            client-secret: ${OAUTH_LINKEDIN_CLIENT_SECRET}
-
-
+            redirect-uri: "${baseUrl}/login/oauth2/code/{registrationId}"
 app:
   cors:
     origin: ${CLIENT_APP_DOMAIN}

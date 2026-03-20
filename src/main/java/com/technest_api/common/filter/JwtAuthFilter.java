@@ -1,5 +1,7 @@
-package com.technest_api.common.security;
+package com.technest_api.common.filter;
 
+import com.technest_api.common.security.AuthenticatedUser;
+import com.technest_api.common.security.SecurityErrorResponse;
 import com.technest_api.common.service.JwtService;
 import com.technest_api.module.user.UserRepository;
 import com.technest_api.module.user.model.User;
