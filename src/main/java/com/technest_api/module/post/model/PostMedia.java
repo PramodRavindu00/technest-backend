@@ -21,7 +21,7 @@ public class PostMedia {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "post_id", nullable = false)
     private UUID postId;
 
     @ManyToOne(fetch = FetchType.LAZY)

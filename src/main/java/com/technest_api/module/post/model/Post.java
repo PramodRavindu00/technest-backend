@@ -25,7 +25,7 @@ public class Post {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "author_id", nullable = false)
     private UUID authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)

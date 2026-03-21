@@ -5,7 +5,8 @@ import com.technest_api.common.service.JwtService;
 import com.technest_api.module.auth.dto.AuthTokens;
 import com.technest_api.module.auth.dto.LoginRequest;
 import com.technest_api.module.auth.dto.SignUpRequest;
-import com.technest_api.module.user.UserRepository;
+import com.technest_api.module.user.UserService;
+import com.technest_api.module.user.dto.CreateUserDto;
 import com.technest_api.module.user.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,17 +19,16 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserService userService;
 
     public void localSignUp(SignUpRequest dto) {
-        Optional<User> existByEmail = userRepo.findByEmail(dto.getEmail());
+        Optional<User> existByEmail = userService.findByEmail(dto.getEmail());
         if (existByEmail.isPresent()) {
             User userByEmail = existByEmail.get();
             if (userByEmail.getPasswordHash() == null) {
@@ -38,16 +38,12 @@ public class AuthService {
             }
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-
-        User newUser = User.builder()
-                .email(dto.getEmail())
-                .passwordHash(passwordEncoder.encode(dto.getPassword()))
-                .build();
-        userRepo.save(newUser);
+        CreateUserDto newUser = new CreateUserDto(dto);
+        userService.createUser(newUser);
     }
 
     public AuthTokens localLogin(LoginRequest dto) {
-        Optional<User> existingUserByEmail = userRepo.findByEmail(dto.getEmail());
+        Optional<User> existingUserByEmail = userService.findByEmail(dto.getEmail());
         if (existingUserByEmail.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
@@ -85,10 +81,10 @@ public class AuthService {
         }
 
         String userIdFromToken = jwtService.extractUserIdFromToken(refreshToken);
-        User user = userRepo.findById(UUID.fromString(userIdFromToken))
+
+        User user = userService.findById(userIdFromToken)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                         "User not found"));
-
         return generateTokensFromVerifiedUser(user);
     }
 

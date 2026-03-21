@@ -12,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,18 +33,12 @@ public class SecurityConfig {
 
     @Value("${app.cors.origin}")
     private String origin;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
+    
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         // removes the ROLE_ prefix for roles to allow the exact role name from the DB/System
         return new GrantedAuthorityDefaults("");
     }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -64,7 +56,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(
                                 (request, response, ignored) -> SecurityErrorResponse.accessDenied(
                                         request, response)))
-                .oauth2Login(oauth2 -> oauth2.successHandler());
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler));
 
         httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
