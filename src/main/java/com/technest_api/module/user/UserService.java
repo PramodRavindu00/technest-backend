@@ -1,12 +1,12 @@
 package com.technest_api.module.user;
 
 import com.technest_api.common.constant.enums.Role;
+import com.technest_api.common.exception.OAuth2AuthenticationException;
 import com.technest_api.module.user.dto.CreateUserDto;
 import com.technest_api.module.user.dto.UserResponseDto;
 import com.technest_api.module.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
 
@@ -58,6 +58,25 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepo.findByEmail(email);
+    }
+
+
+    public User findOrCreate(String googleId, String email) {
+        Optional<User> byGoogleId = userRepo.findByGoogleId(googleId);
+        if (byGoogleId.isPresent()) {
+            return byGoogleId.get();  // return the user found from googleId
+        }
+        //not found by googleId? check email exists
+        Optional<User> byEmail = userRepo.findByEmail(email);
+        if (byEmail.isPresent()) {
+            throw OAuth2AuthenticationException.accountConflict(email);
+        }
+
+        User newUser = User.builder()
+                .email(email)
+                .googleId(googleId)
+                .build();
+        return userRepo.save(newUser);
     }
 
     private UserResponseDto toUserResponseDto(User user) {

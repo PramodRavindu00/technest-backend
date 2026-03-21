@@ -25,7 +25,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] publicRoutes = {"/auth/signup", "/auth/login", "/auth/refresh"};
+    private final String[] publicRoutes =
+            {"/auth/signup", "/auth/login", "/auth/refresh", "/auth/exchange", "/login",
+                    "/login/oauth2/**", "/oauth2/authorization/**"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
@@ -33,7 +35,7 @@ public class SecurityConfig {
 
     @Value("${app.cors.origin}")
     private String origin;
-    
+
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         // removes the ROLE_ prefix for roles to allow the exact role name from the DB/System
@@ -60,8 +62,6 @@ public class SecurityConfig {
                         .failureHandler(oAuth2LoginFailureHandler));
 
         httpSecurity.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-
         return httpSecurity.build();
     }
 
