@@ -20,10 +20,17 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(@NonNull HttpServletRequest request,
-                                        HttpServletResponse response,
+                                        @NonNull HttpServletResponse response,
                                         @NonNull AuthenticationException exception)
             throws IOException {
         log.error("OAuth2 authentication failed - {}", exception.getMessage());
+        if (exception.getCause() != null) {
+            log.error("Cause: {}", exception.getCause()
+                    .getMessage());
+        }
+
+        // Log the full exception
+        log.error("Full exception: ", exception);
         response.sendRedirect(origin + "/login?error=oauth_failed");
     }
 }

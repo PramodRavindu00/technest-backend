@@ -36,10 +36,17 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(request));
     }
 
+    // should implement
+//    @PostMapping("/exchange")
+//    public ResponseEntity<AuthTokens> exchange(@Valid @RequestBody AuthCodeExchangeRequest dto) {
+//        return ResponseEntity.ok(authService.exchange(dto));
+//    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
         return ResponseEntity.ok()
                 .build();
     }
+
 
 }

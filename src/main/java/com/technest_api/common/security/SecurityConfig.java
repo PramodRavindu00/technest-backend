@@ -26,8 +26,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final String[] publicRoutes =
-            {"/auth/signup", "/auth/login", "/auth/refresh", "/auth/exchange", "/login",
-                    "/login/oauth2/**", "/oauth2/authorization/**"};
+            {"/auth/signup", "/auth/login", "/auth/refresh", "/auth/exchange", "/login/oauth2/**",
+                    "/oauth2/authorization/**"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;

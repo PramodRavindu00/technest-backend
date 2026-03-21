@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class AuthService {
             if (userByEmail.getPasswordHash() == null) {
                 String connectedOauthProviders = getConnectedOauthProviders(userByEmail);
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "Email already exists with" + connectedOauthProviders + " login");
+                        "Email already exists with " + connectedOauthProviders + " login");
             }
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
@@ -75,7 +76,7 @@ public class AuthService {
                     "Refresh token has expired" + ". Please login");
         }
 
-        if (!jwtService.isTokenValid(refreshToken)) {
+        if (jwtService.isTokenValid(refreshToken)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                     "Invalid refresh token. " + "Please login");
         }
@@ -86,6 +87,19 @@ public class AuthService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                         "User not found"));
         return generateTokensFromVerifiedUser(user);
+    }
+
+    // should implement
+//    public AuthTokens exchange(AuthCodeExchangeRequest dto) {
+//
+//        return generateTokensFromVerifiedUser();
+//    }
+
+    public String generateAuthCode(User authenticatedUser) {
+        //need to implement
+        String authCode = UUID.randomUUID()
+                .toString();
+        return authCode;
     }
 
     private String getConnectedOauthProviders(User user) {

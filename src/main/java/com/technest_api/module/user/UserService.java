@@ -60,7 +60,7 @@ public class UserService {
         return userRepo.findByEmail(email);
     }
 
-
+    // this method used in Oauth2 authentication
     public User findOrCreate(String googleId, String email) {
         Optional<User> byGoogleId = userRepo.findByGoogleId(googleId);
         if (byGoogleId.isPresent()) {

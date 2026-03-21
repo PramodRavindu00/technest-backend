@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (!jwtService.isTokenValid(token)) {
+        if (jwtService.isTokenValid(token)) {
             SecurityErrorResponse.unauthorized(request, response, "Invalid Token");
             return;
         }

@@ -28,9 +28,10 @@ spring:
             client-id: ${OAUTH_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
             scope:
+              - openid
               - email
               - profile
-            redirect-uri: "${baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 app:
   cors:
     origin: ${CLIENT_APP_DOMAIN}
@@ -41,6 +42,9 @@ app:
   cookie:
     http-secure: ${COOKIE_HTTP_SECURE}
     refresh-token-expiration-sec: 604800
+logging:
+  level:
+    org.hibernate: WARN
 
 
 

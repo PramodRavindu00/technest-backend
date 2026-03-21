@@ -36,10 +36,10 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
             parseClaims(token);
-            return true;
+            return false;
         }
         catch (JwtException e) {
-            return false;
+            return true;
         }
     }
 

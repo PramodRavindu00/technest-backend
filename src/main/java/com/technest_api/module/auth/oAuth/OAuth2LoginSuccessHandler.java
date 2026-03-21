@@ -1,6 +1,7 @@
 package com.technest_api.module.auth.oAuth;
 
 import com.technest_api.common.exception.OAuth2AuthenticationException;
+import com.technest_api.module.auth.AuthService;
 import com.technest_api.module.user.UserService;
 import com.technest_api.module.user.model.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -26,6 +26,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private String origin;
 
     private final UserService userService;
+    private final AuthService authService;
 
     @Override
     public void onAuthenticationSuccess(@NonNull HttpServletRequest request,
@@ -44,8 +45,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             // find or create a user record
             User user = userService.findOrCreate(googleId, email);
-            String authCode = UUID.randomUUID()
-                    .toString();
+
+            // generate auth code and send the code to redis database with authenticated user's ID
+            String authCode = authService.generateAuthCode(user);
 
             // redirect to the browser
             response.sendRedirect(origin + "/oauth2/callback?code=" + authCode);
